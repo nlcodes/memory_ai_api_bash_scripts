@@ -1,17 +1,20 @@
 #!/bin/bash
 
-# Replace with your api key
-API_KEY="your_api_key_here"
+# Replace with your API key
+API_KEY="your_api_key"
 
 # Initialize conversation history
 HISTORY_FILE="$HOME/deepseek/ds_api_conversation.json"
+
+SYSTEM_MESSAGE="your_system_prompt"
 
 # Initialize conversation history
 if [[ -f "$HISTORY_FILE" ]]; then
     CONVO_HISTORY=$(cat "$HISTORY_FILE")
 else
     CONVO_HISTORY='[
-        {"role": "system", "content": "You are my personal ai helper; assist me"}
+        {"role": "system", 
+    "content": "'"$SYSTEM_MESSAGE"'"}
     ]'
     mkdir -p "$HOME/deepseek"
     echo "$CONVO_HISTORY" > "$HISTORY_FILE"
@@ -26,7 +29,7 @@ while true; do
     CONVO_HISTORY=$(echo "$CONVO_HISTORY" | jq --arg msg "$user_input" '. += [{"role": "user", "content": $msg}]')
     echo "$CONVO_HISTORY" > "$HISTORY_FILE"
 
-    # Call deepseek r1 model with api
+    # Call API WITH ACTUAL HISTORY
     response=$(curl -s https://api.deepseek.com/chat/completions \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $API_KEY" \

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Replace with your anthropic key
-API_KEY="your_api_key_here"
+# Replace with your Anthropic API key
+API_KEY="your_api_key"
 
 # Initialize conversation history
 HISTORY_FILE="$HOME/anthropic/conversation.json"
@@ -15,8 +15,8 @@ else
     echo "$CONVO_HISTORY" > "$HISTORY_FILE"
 fi
 
-# System message
-SYSTEM_MESSAGE="You are my personal ai helper; assist me."
+# System message (top-level parameter)
+SYSTEM_MESSAGE="your_system_prompt"
 
 echo "Chatbot; type 'exit' to quit"
 while true; do
@@ -27,7 +27,7 @@ while true; do
     CONVO_HISTORY=$(echo "$CONVO_HISTORY" | jq --arg msg "$user_input" '. += [{"role": "user", "content": $msg}]')
     echo "$CONVO_HISTORY" > "$HISTORY_FILE"
 
-    # Call Anthropic api with claude 3.5 sonnet
+    # Call Anthropic API with Claude 3.5 Sonnet
     response=$(curl -s https://api.anthropic.com/v1/messages \
         -H "Content-Type: application/json" \
         -H "x-api-key: $API_KEY" \
