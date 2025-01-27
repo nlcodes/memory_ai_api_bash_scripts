@@ -4,8 +4,9 @@
 API_KEY="your_api_key"
 
 # Initialize conversation history
-HISTORY_FILE="$HOME/deepseek/ds_api_conversation.json"
+HISTORY_FILE="$HOME/deepseek/conversation.json"
 
+# System message
 SYSTEM_MESSAGE="your_system_prompt"
 
 # Initialize conversation history
@@ -45,6 +46,14 @@ EOF
 
     # Extract assistant reply
     assistant_reply=$(echo "$response" | jq -r '.choices[0].message.content')
+   
+    # Check for null response
+    if [[ "$assistant_reply" == "null" ]]; then
+        echo -e "\nMEMORY FULL: Please delete the memory file and restart:"
+        echo "$HISTORY_FILE"
+        exit 1 
+    fi
+
     echo "*** $assistant_reply"
 
     # Add assistant reply to history

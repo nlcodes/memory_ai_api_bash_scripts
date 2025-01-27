@@ -6,6 +6,9 @@ API_KEY="your_api_key"
 # Initialize conversation history
 HISTORY_FILE="$HOME/anthropic/conversation.json"
 
+# System message
+SYSTEM_MESSAGE="your_system_prompt"
+
 # Initialize conversation history
 if [[ -f "$HISTORY_FILE" ]]; then
     CONVO_HISTORY=$(cat "$HISTORY_FILE")
@@ -14,9 +17,6 @@ else
     mkdir -p "$HOME/anthropic"
     echo "$CONVO_HISTORY" > "$HISTORY_FILE"
 fi
-
-# System message (top-level parameter)
-SYSTEM_MESSAGE="your_system_prompt"
 
 echo "Chatbot; type 'exit' to quit"
 while true; do
@@ -44,6 +44,14 @@ EOF
 
     # Extract assistant reply
     assistant_reply=$(echo "$response" | jq -r '.content[0].text // "Error: Invalid response"')
+   
+    # Check for error response
+    if [[ "$assistant_reply" == "Error: Invalid response" ]]; then
+        echo -e "\nMEMORY FULL: Please delete the memory file and restart:"
+        echo "$HISTORY_FILE"
+        exit 1 
+    fi
+
     echo "*** $assistant_reply"
 
     # Add assistant reply to history
